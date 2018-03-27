@@ -1,0 +1,17 @@
+
+*.exe
+3dslink_x86_64
+*.3dsx
+*.elf
+*.smdh
+*.lst
+*.map
+
+build\*
+*.d
+*.o
+icon-old.png
+*.bat
+*.smdhx
+*.cx
+*.cy
