@@ -68,92 +68,99 @@ void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 	int dispHei;
 	int dispWid;
 	
-	if (direction == 2){			//up  turn: mirror vertical fix?
-		for (spriteY; spriteY < 10; spriteY++){
-			dispWid = 9;
-			for (spriteX=0; spriteX < 10; spriteX++){
-				if (sprite[spriteY][spriteX] == 1){
-					drawPixel( fb, pos, spriteY, dispWid, white);
-				} 
-				if (sprite[spriteY][spriteX] == 2){
-					drawPixel( fb, pos, spriteY, dispWid, snakeGreen);
-				} 
-				if (sprite[spriteY][spriteX] == 3){
-					drawPixel( fb, pos, spriteY, dispWid, snakeStripes);
-				} 
-				if (sprite[spriteY][spriteX] == 4){
-					drawPixel( fb, pos, spriteY, dispWid, black);
+	switch (direction) {
+		
+		case 1:		// Right
+			for (spriteY=0 ; spriteY < 10; spriteY++){
+				for (spriteX=0; spriteX < 10; spriteX++){
+					if (sprite[spriteX][spriteY] == 1){
+						drawPixel( fb, pos, spriteY, spriteX, white);
+					} 
+					if (sprite[spriteX][spriteY] == 2){
+						drawPixel( fb, pos, spriteY, spriteX, snakeGreen);
+					} 
+					if (sprite[spriteX][spriteY] == 3){
+						drawPixel( fb, pos, spriteY, spriteX, snakeStripes);
+					} 
+					if (sprite[spriteX][spriteY] == 4){
+						drawPixel( fb, pos, spriteY, spriteX, black);
+					}				
 				}
-				dispWid--;				
 			}
-		}
-	}
-	
-	if (direction == 1){			//up	turn 90* left
-		for (spriteY=0 ; spriteY < 10; spriteY++){
-			for (spriteX=0; spriteX < 10; spriteX++){
-				if (sprite[spriteX][spriteY] == 1){
-					drawPixel( fb, pos, spriteY, spriteX, white);
-				} 
-				if (sprite[spriteX][spriteY] == 2){
-					drawPixel( fb, pos, spriteY, spriteX, snakeGreen);
-				} 
-				if (sprite[spriteX][spriteY] == 3){
-					drawPixel( fb, pos, spriteY, spriteX, snakeStripes);
-				} 
-				if (sprite[spriteX][spriteY] == 4){
-					drawPixel( fb, pos, spriteY, spriteX, black);
-				}				
-			}
-		}
-	}
-	
-	if (direction == 4){	//	turn: mirror horizontal
-		int dispHei = 9;
-		for (spriteY=0; spriteY < 10; spriteY++){
-			dispWid = 0;
-			for (spriteX=0; spriteX < 10; spriteX++){
-				if (sprite[spriteY][spriteX] == 1){
-					drawPixel( fb, pos, dispHei, dispWid, white);
-				} 
-				if (sprite[spriteY][spriteX] == 2){
-					drawPixel( fb, pos, dispHei, dispWid, snakeGreen);
-				} 
-				if (sprite[spriteY][spriteX] == 3){
-					drawPixel( fb, pos, dispHei, dispWid, snakeStripes);
-				} 
-				if (sprite[spriteY][spriteX] == 4){
-					drawPixel( fb, pos, dispHei, dispWid, black);
+			break;
+			
+		case 2:		// Up
+			for (spriteY=0; spriteY < 10; spriteY++){
+				dispWid = 9;
+				for (spriteX=0; spriteX < 10; spriteX++){
+					if (sprite[spriteY][spriteX] == 1){
+						drawPixel( fb, pos, spriteY, dispWid, white);
+					} 
+					if (sprite[spriteY][spriteX] == 2){
+						drawPixel( fb, pos, spriteY, dispWid, snakeGreen);
+					} 
+					if (sprite[spriteY][spriteX] == 3){
+						drawPixel( fb, pos, spriteY, dispWid, snakeStripes);
+					} 
+					if (sprite[spriteY][spriteX] == 4){
+						drawPixel( fb, pos, spriteY, dispWid, black);
+					}
+					dispWid--;				
 				}
-				dispWid++;
 			}
-			dispHei--;
-		}
-	}
-	
-	if (direction == 3){ //turn 90* left
-		dispHei = 10;
-		for (spriteY=0; spriteY < 10; spriteY++){
-			dispWid = 10;
-			dispHei--;
-			for (spriteX=0; spriteX < 10; spriteX++){
-				if (sprite[spriteX][spriteY] == 1){
-					drawPixel( fb, pos, dispHei, dispWid-1, white);
-				} 
-				if (sprite[spriteX][spriteY] == 2){
-					drawPixel( fb, pos, dispHei, dispWid-1, snakeGreen);
-				} 
-				if (sprite[spriteX][spriteY] == 3){
-					drawPixel( fb, pos, dispHei, dispWid-1, snakeStripes);
-				} 
-				if (sprite[spriteX][spriteY] == 4){
-					drawPixel( fb, pos, dispHei, dispWid-1, black);
+			break;
+			
+		case 3:		// Left
+			dispHei = 10;
+			for (spriteY=0; spriteY < 10; spriteY++){
+				dispWid = 10;
+				dispHei--;
+				for (spriteX=0; spriteX < 10; spriteX++){
+					if (sprite[spriteX][spriteY] == 1){
+						drawPixel( fb, pos, dispHei, dispWid-1, white);
+					} 
+					if (sprite[spriteX][spriteY] == 2){
+						drawPixel( fb, pos, dispHei, dispWid-1, snakeGreen);
+					} 
+					if (sprite[spriteX][spriteY] == 3){
+						drawPixel( fb, pos, dispHei, dispWid-1, snakeStripes);
+					} 
+					if (sprite[spriteX][spriteY] == 4){
+						drawPixel( fb, pos, dispHei, dispWid-1, black);
+					}
+					dispWid--;
 				}
-				dispWid--;
 			}
-		}
+			break;
+			
+		case 4:		// Down
+			dispHei = 9;
+			for (spriteY=0; spriteY < 10; spriteY++){
+				dispWid = 0;
+				for (spriteX=0; spriteX < 10; spriteX++){
+					if (sprite[spriteY][spriteX] == 1){
+						drawPixel( fb, pos, dispHei, dispWid, white);
+					} 
+					if (sprite[spriteY][spriteX] == 2){
+						drawPixel( fb, pos, dispHei, dispWid, snakeGreen);
+					} 
+					if (sprite[spriteY][spriteX] == 3){
+						drawPixel( fb, pos, dispHei, dispWid, snakeStripes);
+					} 
+					if (sprite[spriteY][spriteX] == 4){
+						drawPixel( fb, pos, dispHei, dispWid, black);
+					}
+					dispWid++;
+				}
+				dispHei--;
+			}
+			break;
+		
+		default:
+			break;
 	}
 }
+
 
 void drawSpriteC(u8* fb, int pos, int direction, int type){
 	if (type == 1 && direction){
