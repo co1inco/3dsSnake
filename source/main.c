@@ -42,21 +42,20 @@ int game(){
   colors red   = {  0x0,  0x0, 0xFF};
 
   
-  part *start = NULL;
-  part *i = NULL;
-  part *last = NULL;
-  part *q = NULL;
-  part *r = NULL;
+  part *start = NULL;	//Tail
+  part *tmpLast = NULL;	//tmpHead
+  part *last = NULL;	//Head
+  part *tmpFirst = NULL;//to free unlinked first
+  part *workPart = NULL;//current part when going through list
   part *next = NULL;
   
- last = newPart(pos_x,pos_y, direction, direction);
- if (start == NULL) start = last;
- if (i != NULL) i ->next = last;
- i = last;
- last = newPart(pos_x,pos_y, direction, direction);
- if (start == NULL) start = last;
- if (i != NULL) i ->next = last;
- i = last;
+  last = newPart(pos_x,pos_y, direction, direction);
+  if (start == NULL) start = last;
+  tmpLast = last;
+  
+  last = newPart(pos_x,pos_y, direction, direction);	//new part => last part in list
+  if (tmpLast != NULL) tmpLast ->next = last;			//tmpLast => currently next-to-last -> add the new last part
+  tmpLast = last;										// update tmpLast to last
  
   printf("Hello World\n");
 
@@ -78,15 +77,11 @@ int game(){
 		if (debugMode)
 			  debugGrid(fb);		
 		
-		if ((kDown & KEY_RIGHT) && oldDirection != 3) direction = 1;
-		if ((kDown & KEY_UP	  ) && oldDirection != 4) direction = 2;
-		if ((kDown & KEY_LEFT ) && oldDirection != 1) direction = 3;
-		if ((kDown & KEY_DOWN ) && oldDirection != 2) direction = 4;
+		if ((kDown & KEY_RIGHT) && oldDirection != 3) direction = 1; 		//Right - 1
+		if ((kDown & KEY_UP	  ) && oldDirection != 4) direction = 2;		//Up	- 2
+		if ((kDown & KEY_LEFT ) && oldDirection != 1) direction = 3;		//Left	- 3
+		if ((kDown & KEY_DOWN ) && oldDirection != 2) direction = 4;		//Down	- 4
 		
-		//Right - 1
-		//Up	- 2
-		//Left	- 3
-		//Down	- 4
 		
 		//Speed control
 		if (acceleration == accelerationNext){
@@ -96,11 +91,10 @@ int game(){
 		}
 		
 		if (debugMode == true) {
-			if (kDown & KEY_A){					//add new element
+			if (kDown & KEY_A){			//add new element
 				last = newPart(pos_x,pos_y, direction, direction);
-				if (start == NULL) start = last;
-				if (i != NULL) i ->next = last;
-				i = last;
+				if (tmpLast != NULL) tmpLast ->next = last;
+				tmpLast = last;
 				score++;
 				acceleration++;
 			} 
@@ -108,8 +102,7 @@ int game(){
 		}
 		
 		
-		if (wait > speed && !hitEnd){
-			//move forward and border detection
+		if (wait > speed && !hitEnd){	//move forward and border detection
 			switch(direction){
 				case (1):
 					pos_y = pos_y + size;			  // move "size" forward
@@ -143,21 +136,18 @@ int game(){
 					break;
 			}
 
-		//testfor hit self
-			r = start;
+			//testfor hit self
+			workPart = start;
 			if (score > 1){
-				for (; r != NULL; r = next){
-					if (pos_x == r ->x && pos_y == r ->y) hitEnd = true;
-					next = r ->next;
+				for (; workPart != NULL; workPart = next){
+					if (pos_x == workPart ->x && pos_y == workPart ->y) hitEnd = true;
+					next = workPart ->next;
 				}	 
 			}
 		
 			//testfor apple
 			if (pos_x == appleX && pos_y == appleY) {
 				start = newPartTail(start ->x,start ->y, start ->direction, start);
-//				if (start == NULL) start = last;
-//				if (i != NULL) i ->next = last;
-//				i = last;
 				score++;
 				acceleration++;
 			
@@ -183,22 +173,17 @@ int game(){
 				}
 				last ->turn = turn;
 				last ->direction = direction;
-			//	q = last;
-			//	last = q ->next;
-			//	q ->t = partDirection;
 			}
-			last = newPart(pos_x, pos_y, direction, direction); // last => first/head
-			if (start == NULL) start = last;
-			if (i != NULL) i ->next = last;
-			i = last;
 			
-//			q = last;
-//			last = q ->next;
-//			q ->t = partDirection;
-		
-			q = start;							//remove tail
-			start = q ->next;
-			free(q);
+			// add the new head to list
+			last = newPart(pos_x, pos_y, direction, direction);
+			if (tmpLast != NULL) tmpLast ->next = last;
+			tmpLast = last;
+
+			//remove old tail from list
+			tmpFirst = start;
+			start = tmpFirst ->next;
+			free(tmpFirst);
 			
 			wait = 0;		
 			oldDirection = direction;
@@ -206,19 +191,18 @@ int game(){
 		}
 		
 		//Draw Snake
-		r = start;
-		drawSpriteC(fb, r ->x+r->y*DISPHEIGHT , r ->direction, 3);
-		r = r ->next;
-		for (; r != NULL; r = next){
-			partDirection = r ->direction;
-			partTurn = r ->turn;
-//			if (r ->t > 4) partDirection = r ->t;
-			next = r ->next;
+		workPart = start;
+		drawSpriteC(fb, workPart ->x+workPart->y*DISPHEIGHT , workPart ->direction, 3);
+		workPart = workPart ->next;
+		for (; workPart != NULL; workPart = next){
+			partDirection = workPart ->direction;
+			partTurn = workPart ->turn;
+			next = workPart ->next;
 			if (next != NULL) {
-				if (partDirection != partTurn) drawSpriteC(fb, r ->x+r->y*DISPHEIGHT , partTurn, 4);
-				else drawSpriteC(fb, r ->x+r->y*DISPHEIGHT , partDirection, 2);
+				if (partDirection != partTurn) drawSpriteC(fb, workPart ->x+workPart->y*DISPHEIGHT , partTurn, 4);
+				else drawSpriteC(fb, workPart ->x+workPart->y*DISPHEIGHT , partDirection, 2);
 			}
-			if (next == NULL) drawSpriteC(fb, r ->x + r->y*DISPHEIGHT , direction, 1);
+			if (next == NULL) drawSpriteC(fb, workPart ->x + workPart->y*DISPHEIGHT , direction, 1);
 		}
 		
 		pixel(fb, appleX + appleY * DISPHEIGHT, size, red);
@@ -284,11 +268,11 @@ int game(){
   }
   
   //Cleanup list
-  q = start;
+  tmpFirst = start;
   next = NULL;
-  for (; q != NULL; q = next){
-	  next = q ->next;
-	  free(q);
+  for (; tmpFirst != NULL; tmpFirst = next){
+	  next = tmpFirst ->next;
+	  free(tmpFirst);
   }
   return restart;
 }
