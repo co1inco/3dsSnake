@@ -6,14 +6,15 @@
 
 #include "parts.h"
 
-int game(){
+int game(bool autostart){
   u32 kDown;        // keys down
 
   consoleInit(GFX_BOTTOM, NULL);
   u8* fb = gfxGetFramebuffer(GFX_TOP, GFX_RIGHT, NULL, NULL); 
   int y_resolution = DISPWIDTH;
   memset(fb, 0, y_resolution*DISPHEIGHT*3);
-  
+  int size = 10;
+	
   int direction = 1;
   int pos_x		= DISPHEIGHT/2;
   int pos_y		= y_resolution/2;
@@ -22,7 +23,7 @@ int game(){
   bool hitEnd = false;
   int acceleration = 0;
   int accelerationNext = 5;
-  int size = 10;
+
   int wait = 0;
   
   bool debugMode = false; //----debugmode default-----
@@ -33,29 +34,27 @@ int game(){
   int partTurn = 0;
 
   int restart = 0;
-  bool pause = true;
+  bool pause = !autostart;
   
   int appleY = (rand() % y_resolution/size) * size;
   int appleX = (rand() % DISPHEIGHT/size) * size;
   
   
-  colors red   = {  0x0,  0x0, 0xFF};
+  colors red   = { 0x0,  0x0, 0xFF};
 
   
   part *start = NULL;	//Tail
-  part *tmpLast = NULL;	//tmpHead
   part *last = NULL;	//Head
-  part *tmpFirst = NULL;//to free unlinked first
-  part *workPart = NULL;//current part when going through list
-  part *next = NULL;
+  part *tmpPart = NULL;	
+  part *tmpPart2 = NULL; //Need to darw snake and cleanup part list
   
   last = newPart(pos_x,pos_y, direction, direction);
   if (start == NULL) start = last;
-  tmpLast = last;
   
+  tmpPart = last;
   last = newPart(pos_x,pos_y, direction, direction);	//new part => last part in list
-  if (tmpLast != NULL) tmpLast ->next = last;			//tmpLast => currently next-to-last -> add the new last part
-  tmpLast = last;										// update tmpLast to last
+  tmpPart ->next = last;								//tmpLast => currently next-to-last -> add the new last part
+
  
   printf("Hello World\n");
 
@@ -92,9 +91,10 @@ int game(){
 		
 		if (debugMode == true) {
 			if (kDown & KEY_A){			//add new element
+				tmpPart = last;
 				last = newPart(pos_x,pos_y, direction, direction);
-				if (tmpLast != NULL) tmpLast ->next = last;
-				tmpLast = last;
+				tmpPart ->next = last;
+
 				score++;
 				acceleration++;
 			} 
@@ -137,11 +137,11 @@ int game(){
 			}
 
 			//testfor hit self
-			workPart = start;
+			tmpPart = start;
 			if (score > 1){
-				for (; workPart != NULL; workPart = next){
-					if (pos_x == workPart ->x && pos_y == workPart ->y) hitEnd = true;
-					next = workPart ->next;
+				while (tmpPart != NULL){
+					if (pos_x == tmpPart ->x && pos_y == tmpPart ->y) hitEnd = true;
+					tmpPart = tmpPart ->next;
 				}	 
 			}
 		
@@ -176,14 +176,14 @@ int game(){
 			}
 			
 			// add the new head to list
+			tmpPart = last;
 			last = newPart(pos_x, pos_y, direction, direction);
-			if (tmpLast != NULL) tmpLast ->next = last;
-			tmpLast = last;
+			tmpPart ->next = last;
 
 			//remove old tail from list
-			tmpFirst = start;
-			start = tmpFirst ->next;
-			free(tmpFirst);
+			tmpPart = start;
+			start = tmpPart ->next;
+			free(tmpPart);
 			
 			wait = 0;		
 			oldDirection = direction;
@@ -191,18 +191,18 @@ int game(){
 		}
 		
 		//Draw Snake
-		workPart = start;
-		drawSpriteC(fb, workPart ->x+workPart->y*DISPHEIGHT , workPart ->direction, 3);
-		workPart = workPart ->next;
-		for (; workPart != NULL; workPart = next){
-			partDirection = workPart ->direction;
-			partTurn = workPart ->turn;
-			next = workPart ->next;
-			if (next != NULL) {
-				if (partDirection != partTurn) drawSpriteC(fb, workPart ->x+workPart->y*DISPHEIGHT , partTurn, 4);
-				else drawSpriteC(fb, workPart ->x+workPart->y*DISPHEIGHT , partDirection, 2);
+		tmpPart = start;
+		drawSpriteC(fb, tmpPart ->x+tmpPart->y*DISPHEIGHT , tmpPart ->direction, 3);
+		tmpPart = tmpPart ->next;
+		for (; tmpPart != NULL; tmpPart = tmpPart2){
+			partDirection = tmpPart ->direction;
+			partTurn = tmpPart ->turn;
+			tmpPart2 = tmpPart ->next;
+			if (tmpPart2 != NULL) {
+				if (partDirection != partTurn) drawSpriteC(fb, tmpPart ->x+tmpPart->y*DISPHEIGHT , partTurn, 4);
+				else drawSpriteC(fb, tmpPart ->x+tmpPart->y*DISPHEIGHT , partDirection, 2);
 			}
-			if (next == NULL) drawSpriteC(fb, workPart ->x + workPart->y*DISPHEIGHT , direction, 1);
+			if (tmpPart2 == NULL) drawSpriteC(fb, tmpPart ->x + tmpPart->y*DISPHEIGHT , direction, 1);
 		}
 		
 		pixel(fb, appleX + appleY * DISPHEIGHT, size, red);
@@ -255,7 +255,7 @@ int game(){
 		}
 		
 		if ((kDown & KEY_START) && hitEnd) {
-			restart = 1;
+			restart = 2;
 			break;
 		}
 	}
@@ -268,11 +268,11 @@ int game(){
   }
   
   //Cleanup list
-  tmpFirst = start;
-  next = NULL;
-  for (; tmpFirst != NULL; tmpFirst = next){
-	  next = tmpFirst ->next;
-	  free(tmpFirst);
+  tmpPart = start;
+  tmpPart2 = NULL;
+  for (; tmpPart != NULL; tmpPart = tmpPart2){
+	  tmpPart2 = tmpPart ->next;
+	  free(tmpPart);
   }
   return restart;
 }
@@ -288,9 +288,11 @@ int main()
   gfxSetDoubleBuffering(GFX_TOP, false); //turn of double framebuffer
   
   int play = 1;
+  bool autorun = false;
 	
 	while (play){
-		play = game();
+		if (play==2) autorun = true;
+		play = game(autorun);
 	}
 
   // Exit

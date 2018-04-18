@@ -166,46 +166,50 @@ void drawSpriteC(u8* fb, int pos, int direction, int type){
 	if (type == 1 && direction){
 		drawSprite(fb, pos, direction, headSprite);
 	}
-	if (type == 4){
-		if (direction > 4) direction = direction - 4;
-		drawSprite(fb, pos, direction, turnSprite);
-	} 
 	if (type == 2 && direction <= 4){
 		drawSprite(fb, pos, direction, partSprite);
 	}
 	if (type == 3){
 		drawSprite(fb, pos, direction, taleSprite);
 	}
-
+	if (type == 4){
+		if (direction > 4) direction = direction - 4;
+		drawSprite(fb, pos, direction, turnSprite);
+	} 
 }
+
 
 void drawPixel( u8* fb, int pos, int heightOffset, int widthOffset, colors color){
-	fb[(pos*3+heightOffset*3+widthOffset*240*3)+0] = color.blue;
-	fb[(pos*3+heightOffset*3+widthOffset*240*3)+1] = color.green;
-	fb[(pos*3+heightOffset*3+widthOffset*240*3)+2] = color.red;
+	fb[(pos*3+heightOffset*3+widthOffset*DISPHEIGHT*3)+0] = color.blue;
+	fb[(pos*3+heightOffset*3+widthOffset*DISPHEIGHT*3)+1] = color.green;
+	fb[(pos*3+heightOffset*3+widthOffset*DISPHEIGHT*3)+2] = color.red;
 }
+
 
 void pixel(u8* fb, int pos, int size, colors color){
 	int i = 0;
 	for (;i < size; i++){
 		int j = 0;
 		for (;j < size; j++){
-			fb[(pos*3+i*3+j*240*3)+0] = color.blue;
-			fb[(pos*3+i*3+j*240*3)+1] = color.green;
-			fb[(pos*3+i*3+j*240*3)+2] = color.red;
+			fb[(pos*3+i*3+j*DISPHEIGHT*3)+0] = color.blue;
+			fb[(pos*3+i*3+j*DISPHEIGHT*3)+1] = color.green;
+			fb[(pos*3+i*3+j*DISPHEIGHT*3)+2] = color.red;
 		}
 	}
 }
 
 part* newPart(int posX, int posY, int d, int t){
+	
 	part *p = malloc(sizeof(part));
 	p ->x = posX;
 	p ->y = posY;
 	p ->direction = d;
 	p ->turn = t;
 	p ->next = NULL;
+
 	return p;
 }
+
 
 part* newPartTail(int posX, int posY, int d, part *oldTail){
 	part *p = malloc(sizeof(part));
@@ -222,18 +226,17 @@ part* newPartTail(int posX, int posY, int d, part *oldTail){
 void debugGrid(u8* fb){
   int i = 0;
   int j;
-  for (;i<240; i=i+10){
+  for (;i<DISPHEIGHT; i=i+10){
 	  for (j=0; j<400; j=j+10){
 		if (((i/10)%2+(j/10)%2)%2 == 1)
-			emtySquare(fb, i+j*240, 0);
+			emtySquare(fb, i+j*DISPHEIGHT, 0);
 		else
-			emtySquare(fb, i+j*240, 0xff);
+			emtySquare(fb, i+j*DISPHEIGHT, 0xff);
 	  }
   }
 }
 
 void emtySquare(u8* fb, int pos, int type){
-	
 	int i;
 	for (i=0; i<10; i++){ //	|
 		fb[pos*3+i*3] 	= 0xff;
