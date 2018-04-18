@@ -201,15 +201,15 @@ int game(bool autostart){
 			printf("\e[1;1H\e[2J");
 			printf("\x1b[1;0H SCORE: %i", score);
 			if (debugMode == true) {
-				printf("\x1b[2;0H X:    	%i  ", pos_x);
-				printf("\x1b[3;0H Y:    	%i  ", pos_y);
-				printf("\x1b[4;0H End:  	%i  ", hitEnd);
-				printf("\x1b[5;0H Score:	%i  ", score);
-				printf("\x1b[6;0H Speed:	%i  ", speed);
-				printf("\x1b[7;0H SpeedNext:%i	", accelerationNext);
-				printf("\x1b[8;0H ApplX:	%i  ", appleX);
-				printf("\x1b[9;0H ApplY:	%i  ", appleY);
-				printf("\x1b[10;0H Debug:	%i	", debugMode);
+				printf("\x1b[2;0H X:    		%i  ", pos_x);
+				printf("\x1b[3;0H Y:    		%i  ", pos_y);
+				printf("\x1b[4;0H End:  		%i  ", hitEnd);
+				printf("\x1b[5;0H Score:		%i  ", score);
+				printf("\x1b[6;0H Speed:		%i  ", speed);
+				printf("\x1b[7;0H SpeedNext:	%i	", accelerationNext);
+				printf("\x1b[8;0H ApplX:		%i  ", appleX);
+				printf("\x1b[9;0H ApplY:		%i  ", appleY);
+				printf("\x1b[10;0H Debug:		%i	", debugMode);
 			}
 		}
 		
