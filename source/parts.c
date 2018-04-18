@@ -28,12 +28,12 @@ int partSprite[10][10] = {
 	{ 0, 0, 2, 2, 3, 2, 2, 2, 0, 0},
 	{ 0, 0, 2, 2, 2, 3, 2, 2, 0, 0},
 	{ 0, 0, 2, 2, 2, 2, 3, 2, 0, 0},
-	{ 0, 0, 3, 2, 2, 2, 2, 3, 0, 0},
+	{ 0, 0, 2, 2, 2, 2, 2, 2, 0, 0},
 	{ 0, 0, 2, 3, 2, 2, 2, 2, 0, 0},
 	{ 0, 0, 2, 2, 3, 2, 2, 2, 0, 0},
 	{ 0, 0, 2, 2, 2, 3, 2, 2, 0, 0},
 	{ 0, 0, 2, 2, 2, 2, 3, 2, 0, 0},
-	{ 0, 0, 3, 2, 2, 2, 2, 3, 0, 0},
+	{ 0, 0, 2, 2, 2, 2, 2, 2, 0, 0},
 };
 
 int taleSprite[10][10] = {
@@ -46,15 +46,15 @@ int taleSprite[10][10] = {
 	{ 0, 0, 2, 2, 3, 2, 2, 2, 0, 0},
 	{ 0, 0, 2, 2, 2, 3, 2, 2, 0, 0},
 	{ 0, 0, 2, 2, 2, 2, 3, 2, 0, 0},
-	{ 0, 0, 3, 2, 2, 2, 2, 3, 0, 0},
+	{ 0, 0, 2, 2, 2, 2, 2, 2, 0, 0},
 };
 
 int turnSprite[10][10] = {
 	{ 0, 0, 2, 3, 2, 2, 2, 2, 0, 0},
 	{ 0, 0, 2, 2, 3, 2, 2, 2, 0, 0},
-	{ 3, 2, 2, 2, 2, 3, 2, 2, 0, 0},
+	{ 2, 2, 2, 2, 2, 3, 2, 2, 0, 0},
 	{ 2, 2, 2, 2, 3, 2, 3, 2, 0, 0},
-	{ 2, 2, 2, 3, 2, 2, 3, 3, 0, 0},
+	{ 2, 2, 2, 3, 2, 2, 3, 2, 0, 0},
 	{ 2, 2, 3, 2, 2, 3, 2, 2, 0, 0},
 	{ 2, 3, 2, 2, 3, 2, 2, 0, 0, 0},
 	{ 3, 2, 2, 2, 2, 2, 0, 0, 0, 0},
@@ -69,7 +69,7 @@ void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 	
 	if (direction == 2){			//up  turn: mirror vertical fix?
 		while ( y < 10){
-			j = 10;
+			j = 9;
 			x = 0;
 			for (; x < 10; x++){
 				if (sprite[y][x] == 1){
@@ -103,8 +103,11 @@ void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 					drawPixel( fb, pos, y, x, snakeGreen);
 				} 
 				if (sprite[x][y] == 3){
-					drawPixel( fb, pos, y, x, black);
+					drawPixel( fb, pos, y, x, snakeStripes);
 				} 
+				if (sprite[x][y] == 4){
+					drawPixel( fb, pos, y, x, black);
+				}
 				//if (headSprite[y][x] == 0) drawPixel( fb, pos, y, x, white); 
 				
 			}
@@ -113,7 +116,7 @@ void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 	
 	if (direction == 4){	//	turn: mirror horizontal
 		int i = 9;
-		int j =10;
+		int j;
 		for (; y < 10; y++){
 			
 			x = 0;
@@ -126,6 +129,9 @@ void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 					drawPixel( fb, pos, i, j, snakeGreen);
 				} 
 				if (sprite[y][x] == 3){
+					drawPixel( fb, pos, i, j, snakeStripes);
+				} 
+				if (sprite[y][x] == 4){
 					drawPixel( fb, pos, i, j, black);
 				}
 				j++;
@@ -142,13 +148,16 @@ void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 			x = 0;
 			for (; x < 10; x++){
 				if (sprite[x][y] == 1){
-					drawPixel( fb, pos, i, j, white);
+					drawPixel( fb, pos, i, j-1, white);
 				} 
 				if (sprite[x][y] == 2){
-					drawPixel( fb, pos, i, j, snakeGreen);
+					drawPixel( fb, pos, i, j-1, snakeGreen);
 				} 
 				if (sprite[x][y] == 3){
-					drawPixel( fb, pos, i, j, black);
+					drawPixel( fb, pos, i, j-1, snakeStripes);
+				} 
+				if (sprite[x][y] == 4){
+					drawPixel( fb, pos, i, j-1, black);
 				}
 			j--;
 			}
@@ -174,10 +183,10 @@ void drawSpriteC(u8* fb, int pos, int direction, int type){
 
 }
 
-void drawPixel( u8* fb, int pos, int i, int j, colors color){
-	fb[(pos*3+i*3+j*240*3)+0] = color.blue;
-	fb[(pos*3+i*3+j*240*3)+1] = color.green;
-	fb[(pos*3+i*3+j*240*3)+2] = color.red;
+void drawPixel( u8* fb, int pos, int heightOffset, int widthOffset, colors color){
+	fb[(pos*3+heightOffset*3+widthOffset*240*3)+0] = color.blue;
+	fb[(pos*3+heightOffset*3+widthOffset*240*3)+1] = color.green;
+	fb[(pos*3+heightOffset*3+widthOffset*240*3)+2] = color.red;
 }
 
 void pixel(u8* fb, int pos, int size, colors color){
@@ -212,3 +221,45 @@ part* newPartTail(int posX, int posY, int d, part *oldTail){
 //	oldTail ->next = p;
 	return p;
 }
+
+
+void debugGrid(u8* fb){
+  int i = 0;
+  int j;
+  for (;i<240; i=i+10){
+	  for (j=0; j<400; j=j+10){
+		if (((i/10)%2+(j/10)%2)%2 == 1)
+			emtySquare(fb, i+j*240, 0);
+		else
+			emtySquare(fb, i+j*240, 0xff);
+	  }
+  }
+}
+
+void emtySquare(u8* fb, int pos, int type){
+	
+	int i;
+	for (i=0; i<10; i++){ //	|
+		fb[pos*3+i*3] 	= 0xff;
+		fb[pos*3+i*3+1]	= type;
+		fb[pos*3+i*3+2]	= type;
+	}
+	for (i=0; i<10; i++){//		|_
+		fb[pos*3+240*i*3] 	= 0xff;
+		fb[pos*3+240*i*3+1]	= type;
+		fb[pos*3+240*i*3+2]	= type;
+	}
+	for (i=0; i<10; i++){//		|_|
+		fb[240*9*3+pos*3+i*3] 	= 0xff;
+		fb[240*9*3+pos*3+i*3+1]	= type;
+		fb[240*9*3+pos*3+i*3+2]	= type;
+	}
+	for (i=0; i<10; i++){
+		fb[27+pos*3+240*i*3] 	= 0xff;
+		fb[27+pos*3+240*i*3+1]	= type;
+		fb[27+pos*3+240*i*3+2]	= type;
+	}	
+}
+
+
+

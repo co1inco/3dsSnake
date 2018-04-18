@@ -25,7 +25,7 @@ int game(){
   int size = 10;
   int wait = 0;
   
-  bool debugMode = false;
+  bool debugMode = false; //----debugmode default-----
   
   int oldDirection = 0;
   int partDirection = 0;
@@ -38,13 +38,9 @@ int game(){
   int appleY = (rand() % y_resolution/size) * size;
   int appleX = (rand() % 240/size) * size;
   
-/*  
-colors white = { 0xFF, 0xFF, 0xFF};
-colors black = {  0x0,  0x0,  0x0};
-colors blue  = { 0xFF,  0x0,  0x0};*/
-colors red   = {  0x0,  0x0, 0xFF};/*
-colors snakeGreen = { 13, 215, 13};
-colors snakeStripes = { 00, 36, 05};*/
+  
+  colors red   = {  0x0,  0x0, 0xFF};
+
   
   part *start = NULL;
   part *i = NULL;
@@ -61,7 +57,7 @@ colors snakeStripes = { 00, 36, 05};*/
  if (start == NULL) start = last;
  if (i != NULL) i ->next = last;
  i = last;
-  
+ 
   printf("Hello World\n");
 
   // Main loop
@@ -79,10 +75,18 @@ colors snakeStripes = { 00, 36, 05};*/
 		
 		memset(fb, 5, y_resolution*240*3);
 		
+		if (debugMode)
+			  debugGrid(fb);		
+		
 		if ((kDown & KEY_RIGHT) && oldDirection != 3) direction = 1;
 		if ((kDown & KEY_UP	  ) && oldDirection != 4) direction = 2;
 		if ((kDown & KEY_LEFT ) && oldDirection != 1) direction = 3;
 		if ((kDown & KEY_DOWN ) && oldDirection != 2) direction = 4;
+		
+		//Right - 1
+		//Up	- 2
+		//Left	- 3
+		//Down	- 4
 		
 		//Speed control
 		if (acceleration == accelerationNext){
@@ -304,7 +308,6 @@ int main()
 	while (play){
 		play = game();
 	}
-	
 
   // Exit
   gfxExit();
