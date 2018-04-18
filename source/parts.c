@@ -239,22 +239,22 @@ void debugGrid(u8* fb){
 void emtySquare(u8* fb, int pos, int type){
 	int i;
 	for (i=0; i<10; i++){ //	|
-		fb[pos*3+i*3] 	= 0xff;
+		fb[pos*3+i*3] 	= type;
 		fb[pos*3+i*3+1]	= type;
 		fb[pos*3+i*3+2]	= type;
 	}
 	for (i=0; i<10; i++){//		|_
-		fb[pos*3+240*i*3] 	= 0xff;
+		fb[pos*3+240*i*3] 	= type;
 		fb[pos*3+240*i*3+1]	= type;
 		fb[pos*3+240*i*3+2]	= type;
 	}
 	for (i=0; i<10; i++){//		|_|
-		fb[240*9*3+pos*3+i*3] 	= 0xff;
+		fb[240*9*3+pos*3+i*3] 	= type;
 		fb[240*9*3+pos*3+i*3+1]	= type;
 		fb[240*9*3+pos*3+i*3+2]	= type;
 	}
 	for (i=0; i<10; i++){
-		fb[27+pos*3+240*i*3] 	= 0xff;
+		fb[27+pos*3+240*i*3] 	= type;
 		fb[27+pos*3+240*i*3+1]	= type;
 		fb[27+pos*3+240*i*3+2]	= type;
 	}	

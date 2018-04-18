@@ -57,25 +57,31 @@ int game(bool autostart){
 
  
   printf("Hello World\n");
-
+ 
+  
   // Main loop
   while (aptMainLoop())
   {
+	
 	fb = gfxGetFramebuffer(GFX_TOP, GFX_RIGHT, NULL, NULL); //set fb to current framebuffer or else flickering
 	
     hidScanInput();
     kDown = hidKeysDown();
 
 	if (kDown & KEY_START) pause = !pause;
-  
+ 
 	if (hitEnd) pause = true;
 	
 	if (!pause){
 		
 		memset(fb, 5, y_resolution*DISPHEIGHT*3);
 		
-		if (debugMode)
-			  debugGrid(fb);		
+		if (debugMode) {
+			memset(fb, 0x88, y_resolution*DISPHEIGHT*3);
+			debugGrid(fb);	
+		} else {
+			memset(fb, 5, y_resolution*DISPHEIGHT*3);
+		}
 		
 		if ((kDown & KEY_RIGHT) && oldDirection != 3) direction = 1; 		//Right - 1
 		if ((kDown & KEY_UP	  ) && oldDirection != 4) direction = 2;		//Up	- 2
@@ -188,7 +194,23 @@ int game(bool autostart){
 			
 			wait = 0;		
 			oldDirection = direction;
-
+			
+			
+			//---- Consol output ----
+//			consoleClear;
+			printf("\e[1;1H\e[2J");
+			printf("\x1b[1;0H SCORE: %i", score);
+			if (debugMode == true) {
+				printf("\x1b[2;0H X:    	%i  ", pos_x);
+				printf("\x1b[3;0H Y:    	%i  ", pos_y);
+				printf("\x1b[4;0H End:  	%i  ", hitEnd);
+				printf("\x1b[5;0H Score:	%i  ", score);
+				printf("\x1b[6;0H Speed:	%i  ", speed);
+				printf("\x1b[7;0H SpeedNext:%i	", accelerationNext);
+				printf("\x1b[8;0H ApplX:	%i  ", appleX);
+				printf("\x1b[9;0H ApplY:	%i  ", appleY);
+				printf("\x1b[10;0H Debug:	%i	", debugMode);
+			}
 		}
 		
 		
@@ -209,22 +231,7 @@ int game(bool autostart){
 
 		pixel(fb, appleX + appleY * DISPHEIGHT, size, red);
 	
-		
-		//---- Consol output ----
-		consoleClear;
-		printf("\e[1;1H\e[2J");
-		printf("\x1b[1;0H SCORE: %i", score);
-		if (debugMode == true) {
-			printf("\x1b[2;0H X:    	%i  ", pos_x);
-			printf("\x1b[3;0H Y:    	%i  ", pos_y);
-			printf("\x1b[4;0H End:  	%i  ", hitEnd);
-			printf("\x1b[5;0H Score:	%i  ", score);
-			printf("\x1b[6;0H Speed:	%i  ", speed);
-			printf("\x1b[7;0H SpeedNext:%i	", accelerationNext);
-			printf("\x1b[8;0H ApplX:	%i  ", appleX);
-			printf("\x1b[9;0H ApplY:	%i  ", appleY);
-			printf("\x1b[10;0H Debug:	%i	", debugMode);
-		}
+			
 		
 		// Flush and swap framebuffers
 		gfxFlushBuffers();
@@ -232,7 +239,7 @@ int game(bool autostart){
 		wait++;
 	
 	} else {	//when pause
-	
+
 					 printf("\x1b[12;%iH [PAUSE] ", (y_resolution/8)/6+3); //22
 		if (!hitEnd) printf("\x1b[14;%iH Press [START]  to continue", (y_resolution/8)/8);
 					 printf("\x1b[15;%iH Press [SELECT] to exit", (y_resolution/8)/8);
