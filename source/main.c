@@ -244,8 +244,13 @@ colors snakeStripes = { 00, 36, 05};*/
 	
 	else {
 		printf("\x1b[12;%iH [PAUSE] ", (y_resolution/8)/6+3); //22
-		printf("\x1b[14;%iH Press [START]  to continue", (y_resolution/8)/6);
-		printf("\x1b[15;%iH Press [SELECT] to exit", (y_resolution/8)/6);
+		if (!hitEnd)
+			printf("\x1b[14;%iH Press [START]  to continue", (y_resolution/8)/8);
+		printf("\x1b[15;%iH Press [SELECT] to exit", (y_resolution/8)/8);
+		if (hitEnd)
+			printf("\x1b[16;%iH Press [START] or (A) to restart", (y_resolution/8)/8);
+		else
+			printf("\x1b[16;%iH Press (A) to restart", (y_resolution/8)/8);
 		
 		if (kDown & KEY_SELECT){
 			restart = 0;
