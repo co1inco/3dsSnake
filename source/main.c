@@ -61,7 +61,8 @@ int game(bool autostart){
   // Main loop
   while (aptMainLoop())
   {
-
+	fb = gfxGetFramebuffer(GFX_TOP, GFX_RIGHT, NULL, NULL); //set fb to current framebuffer or else flickering
+	
     hidScanInput();
     kDown = hidKeysDown();
 
@@ -190,7 +191,8 @@ int game(bool autostart){
 
 		}
 		
-		//Draw Snake
+		
+		//---- Draw ----
 		tmpPart = start;
 		drawSpriteC(fb, tmpPart ->x+tmpPart->y*DISPHEIGHT , tmpPart ->direction, 3);
 		tmpPart = tmpPart ->next;
@@ -204,16 +206,14 @@ int game(bool autostart){
 			}
 			if (tmpPart2 == NULL) drawSpriteC(fb, tmpPart ->x + tmpPart->y*DISPHEIGHT , direction, 1);
 		}
-		
+
 		pixel(fb, appleX + appleY * DISPHEIGHT, size, red);
 	
-		wait++;
 		
+		//---- Consol output ----
 		consoleClear;
 		printf("\e[1;1H\e[2J");
-		
 		printf("\x1b[1;0H SCORE: %i", score);
-		
 		if (debugMode == true) {
 			printf("\x1b[2;0H X:    	%i  ", pos_x);
 			printf("\x1b[3;0H Y:    	%i  ", pos_y);
@@ -225,45 +225,38 @@ int game(bool autostart){
 			printf("\x1b[9;0H ApplY:	%i  ", appleY);
 			printf("\x1b[10;0H Debug:	%i	", debugMode);
 		}
-//		printf("\x1b[11;%iH         ", (y_resolution/8)/2-3*8);
-//		printf("\x1b[12;%iH                            ", (y_resolution/8)/6);
-//		printf("\x1b[13;%iH                            ", (y_resolution/8)/6);
-	}
+		
+		// Flush and swap framebuffers
+		gfxFlushBuffers();
+		gfxSwapBuffers();
+		wait++;
 	
-	else {
-		printf("\x1b[12;%iH [PAUSE] ", (y_resolution/8)/6+3); //22
-		if (!hitEnd)
-			printf("\x1b[14;%iH Press [START]  to continue", (y_resolution/8)/8);
-		printf("\x1b[15;%iH Press [SELECT] to exit", (y_resolution/8)/8);
-		if (hitEnd)
-			printf("\x1b[16;%iH Press [START] or (A) to restart", (y_resolution/8)/8);
-		else
-			printf("\x1b[16;%iH Press (A) to restart", (y_resolution/8)/8);
+	} else {	//when pause
+	
+					 printf("\x1b[12;%iH [PAUSE] ", (y_resolution/8)/6+3); //22
+		if (!hitEnd) printf("\x1b[14;%iH Press [START]  to continue", (y_resolution/8)/8);
+					 printf("\x1b[15;%iH Press [SELECT] to exit", (y_resolution/8)/8);
+		if (hitEnd)  printf("\x1b[16;%iH Press [START] or (A) to restart", (y_resolution/8)/8);
+		else 		 printf("\x1b[16;%iH Press (A) to restart", (y_resolution/8)/8);
+		
 		
 		if (kDown & KEY_SELECT){
 			restart = 0;
 			break;
 		}
-		
 		if (kDown & KEY_A){
 			restart = 1;
 			break;
 		}
-		
 		if (kDown & KEY_X){
 			debugMode = !debugMode;
 		}
-		
 		if ((kDown & KEY_START) && hitEnd) {
 			restart = 2;
 			break;
 		}
 	}
 		
-	
-		// Flush and swap framebuffers
-    gfxFlushBuffers();
-    gfxSwapBuffers();
     gspWaitForVBlank();
   }
   
@@ -282,10 +275,10 @@ int main()
   // Initializations
   srvInit();        // services
   aptInit();        // applets
-  hidInit();    // input
+  hidInit();    	// input
   gfxInitDefault(); // graphics
 //  gfxSet3D(false);  // stereoscopy (true: enabled / false: disabled)
-  gfxSetDoubleBuffering(GFX_TOP, false); //turn of double framebuffer
+  gfxSetDoubleBuffering(GFX_TOP, true); //turn of double framebuffer
   
   int play = 1;
   bool autorun = false;
