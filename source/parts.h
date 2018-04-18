@@ -1,3 +1,6 @@
+#define DispWidth (400)
+#define DispHeight (240)
+
 typedef struct {
 	int blue;
 	int green;

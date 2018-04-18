@@ -11,11 +11,11 @@ int game(){
 
   consoleInit(GFX_BOTTOM, NULL);
   u8* fb = gfxGetFramebuffer(GFX_TOP, GFX_RIGHT, NULL, NULL); 
-  int y_resolution = 400;
-  memset(fb, 0, y_resolution*240*3);
+  int y_resolution = DISPWIDTH;
+  memset(fb, 0, y_resolution*DISPHEIGHT*3);
   
   int direction = 1;
-  int pos_x		= 240/2;
+  int pos_x		= DISPHEIGHT/2;
   int pos_y		= y_resolution/2;
   int score 	= 0;
   int speed     = 15; //smaller = faster
@@ -36,7 +36,7 @@ int game(){
   bool pause = true;
   
   int appleY = (rand() % y_resolution/size) * size;
-  int appleX = (rand() % 240/size) * size;
+  int appleX = (rand() % DISPHEIGHT/size) * size;
   
   
   colors red   = {  0x0,  0x0, 0xFF};
@@ -73,7 +73,7 @@ int game(){
 	
 	if (!pause){
 		
-		memset(fb, 5, y_resolution*240*3);
+		memset(fb, 5, y_resolution*DISPHEIGHT*3);
 		
 		if (debugMode)
 			  debugGrid(fb);		
@@ -120,8 +120,8 @@ int game(){
 					break;
 				case (2):
 					pos_x = pos_x + size;
-					if (pos_x > 240-size){
-						pos_x = 240-size;
+					if (pos_x > DISPHEIGHT-size){
+						pos_x = DISPHEIGHT-size;
 						hitEnd = true;
 					}
 					break;
@@ -163,7 +163,7 @@ int game(){
 			
 				srand(time(NULL));
 				appleY = (rand() % y_resolution/size) * size;
-				appleX = (rand() % 240/size) * size;
+				appleX = (rand() % DISPHEIGHT/size) * size;
 			}
 			
 			turn = direction;
@@ -207,7 +207,7 @@ int game(){
 		
 		//Draw Snake
 		r = start;
-		drawSpriteC(fb, r ->x+r->y*240 , r ->direction, 3);
+		drawSpriteC(fb, r ->x+r->y*DISPHEIGHT , r ->direction, 3);
 		r = r ->next;
 		for (; r != NULL; r = next){
 			partDirection = r ->direction;
@@ -215,13 +215,13 @@ int game(){
 //			if (r ->t > 4) partDirection = r ->t;
 			next = r ->next;
 			if (next != NULL) {
-				if (partDirection != partTurn) drawSpriteC(fb, r ->x+r->y*240 , partTurn, 4);
-				else drawSpriteC(fb, r ->x+r->y*240 , partDirection, 2);
+				if (partDirection != partTurn) drawSpriteC(fb, r ->x+r->y*DISPHEIGHT , partTurn, 4);
+				else drawSpriteC(fb, r ->x+r->y*DISPHEIGHT , partDirection, 2);
 			}
-			if (next == NULL) drawSpriteC(fb, r ->x + r->y*240 , direction, 1);
+			if (next == NULL) drawSpriteC(fb, r ->x + r->y*DISPHEIGHT , direction, 1);
 		}
 		
-		pixel(fb, appleX + appleY * 240, size, red);
+		pixel(fb, appleX + appleY * DISPHEIGHT, size, red);
 	
 		wait++;
 		
