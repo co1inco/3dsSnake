@@ -9,6 +9,9 @@ colors red   = {  0x0,  0x0, 0xFF};
 
 colors snakeGreen = { 13, 215, 13};
 colors snakeStripes = { 00, 36, 05};
+colors appleRed		= { 0x10, 0x10, 0xf4};
+colors appleRed2	= { 0x52, 0x2c, 0xf8};
+colors appleBrown	= { 0x02, 0x02, 0x79};
 
 int headSprite[10][10] = {
 	{ 0, 0, 2, 3, 2, 2, 2, 2, 0, 0},
@@ -60,6 +63,19 @@ int turnSprite[10][10] = {
 	{ 3, 2, 2, 2, 2, 2, 0, 0, 0, 0},
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+};
+
+int appleSprite[10][10] = {
+	{ 0 ,0, 4, 4, 0, 3, 3, 0, 0, 0},
+	{ 0, 0, 0, 0, 4, 3, 0, 0, 0, 0},
+	{ 0, 1, 1, 1, 3, 0, 1, 1, 1, 0},
+	{ 0, 1, 1, 1, 3, 1, 1, 1, 1, 1},
+	{ 1, 1, 1, 1, 1, 1, 2, 2, 1, 1},
+	{ 1, 1, 1, 1, 1, 1, 2, 2, 1, 1},
+	{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+	{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+	{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+	{ 0, 0, 1, 1, 0, 0, 1, 1, 0, 0},
 };
 
 void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
@@ -176,6 +192,32 @@ void drawSpriteC(u8* fb, int pos, int direction, int type){
 		if (direction > 4) direction = direction - 4;
 		drawSprite(fb, pos, direction, turnSprite);
 	} 
+	if (type == 5){
+		int spriteY;
+		int spriteX;
+		int dispWid;
+		int dispHei;
+		dispHei = 9;
+		for (spriteY=0; spriteY < 10; spriteY++){
+			dispWid = 0;
+			for (spriteX=0; spriteX < 10; spriteX++){
+				if (appleSprite[spriteY][spriteX] == 1){
+					drawPixel( fb, pos, dispHei, dispWid, appleRed);
+				} 
+				if (appleSprite[spriteY][spriteX] == 2){
+					drawPixel( fb, pos, dispHei, dispWid, appleRed2);
+				} 
+				if (appleSprite[spriteY][spriteX] == 3){
+					drawPixel( fb, pos, dispHei, dispWid, appleBrown);
+				} 
+				if (appleSprite[spriteY][spriteX] == 4){
+					drawPixel( fb, pos, dispHei, dispWid, snakeGreen);
+				}
+				dispWid++;
+			}
+			dispHei--;
+		}
+	}
 }
 
 

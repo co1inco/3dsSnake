@@ -229,7 +229,7 @@ int game(bool autostart){
 			if (tmpPart2 == NULL) drawSpriteC(fb, tmpPart ->x + tmpPart->y*DISPHEIGHT , direction, 1);
 		}
 
-		pixel(fb, appleX + appleY * DISPHEIGHT, size, red);
+		drawSpriteC(fb, appleX + appleY * DISPHEIGHT, 1, 5);
 	
 			
 		
