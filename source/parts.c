@@ -78,6 +78,7 @@ int appleSprite[10][10] = {
 	{ 0, 0, 5, 5, 0, 0, 5, 5, 0, 0},
 };
 
+
 void drawPixel_int2col(u8* fb, int pos, int posY, int posX,  int col){
 	switch (col)
 	{
@@ -109,6 +110,9 @@ void drawPixel_int2col(u8* fb, int pos, int posY, int posX,  int col){
 }
 
 void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
+	int spriteWidth = 10; //Y
+	int spriteHeight = 10;  //X
+	
 	int spriteX;
 	int spriteY;
 	int dispHei;
@@ -117,17 +121,17 @@ void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 	switch (direction) {
 		
 		case 1:		// Right
-			for (spriteY=0 ; spriteY < 10; spriteY++){
-				for (spriteX=0; spriteX < 10; spriteX++){
+			for (spriteY=0 ; spriteY < spriteWidth; spriteY++){
+				for (spriteX=0; spriteX < spriteHeight; spriteX++){
 					drawPixel_int2col( fb, pos, spriteY, spriteX, sprite[spriteX][spriteY]);				
 				}
 			}
 			break;
 			
 		case 2:		// Up
-			for (spriteY=0; spriteY < 10; spriteY++){
-				dispWid = 9;
-				for (spriteX=0; spriteX < 10; spriteX++){
+			for (spriteY=0; spriteY < spriteWidth; spriteY++){
+				dispWid = spriteWidth-1;
+				for (spriteX=0; spriteX < spriteHeight; spriteX++){
 					drawPixel_int2col( fb, pos, spriteY, dispWid, sprite[spriteY][spriteX]);
 					dispWid--;				
 				}
@@ -135,11 +139,11 @@ void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 			break;
 			
 		case 3:		// Left
-			dispHei = 10;
-			for (spriteY=0; spriteY < 10; spriteY++){
-				dispWid = 10;
+			dispHei = spriteHeight;
+			for (spriteY=0; spriteY < spriteWidth; spriteY++){
+				dispWid = spriteWidth;
 				dispHei--;
-				for (spriteX=0; spriteX < 10; spriteX++){
+				for (spriteX=0; spriteX < spriteHeight; spriteX++){
 					drawPixel_int2col( fb, pos, dispHei, dispWid-1, sprite[spriteX][spriteY]);
 					dispWid--;
 				}
@@ -147,10 +151,10 @@ void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 			break;
 			
 		case 4:		// Down
-			dispHei = 9;
-			for (spriteY=0; spriteY < 10; spriteY++){
+			dispHei = spriteHeight-1;
+			for (spriteY=0; spriteY < spriteWidth; spriteY++){
 				dispWid = 0;
-				for (spriteX=0; spriteX < 10; spriteX++){
+				for (spriteX=0; spriteX < spriteHeight; spriteX++){
 					drawPixel_int2col( fb, pos, dispHei, dispWid, sprite[spriteY][spriteX]);
 					dispWid++;
 				}
@@ -179,7 +183,7 @@ void drawSpriteC(u8* fb, int pos, int direction, int type){
 		drawSprite(fb, pos, direction, turnSprite);
 	} 
 	if (type == 5){
-		drawSprite(fb, pos, 1, appleSprite);
+		drawSprite(fb, pos, 4, appleSprite);
 		
 	}
 }
@@ -233,7 +237,7 @@ void debugGrid(u8* fb){
   int i = 0;
   int j;
   for (;i<DISPHEIGHT; i=i+10){
-	  for (j=0; j<400; j=j+10){
+	  for (j=0; j<DISPWIDTH; j=j+10){
 		if (((i/10)%2+(j/10)%2)%2 == 1)
 			emtySquare(fb, i+j*DISPHEIGHT, 0);
 		else
@@ -245,24 +249,24 @@ void debugGrid(u8* fb){
 void emtySquare(u8* fb, int pos, int type){
 	int i;
 	for (i=0; i<10; i++){ //	|
-		fb[pos*3+i*3] 	= type;
-		fb[pos*3+i*3+1]	= type;
-		fb[pos*3+i*3+2]	= type;
+		fb[pos*3+i*3    ] 	= type;
+		fb[pos*3+i*3 + 1]	= type;
+		fb[pos*3+i*3 + 2]	= type;
 	}
 	for (i=0; i<10; i++){//		|_
-		fb[pos*3+DISPWIDTH*i*3] 	= type;
-		fb[pos*3+DISPWIDTH*i*3+1]	= type;
-		fb[pos*3+DISPWIDTH*i*3+2]	= type;
+		fb[pos*3 + DISPHEIGHT*i*3    ] 	= type;
+		fb[pos*3 + DISPHEIGHT*i*3 + 1]	= type;
+		fb[pos*3 + DISPHEIGHT*i*3 + 2]	= type;
 	}
 	for (i=0; i<10; i++){//		|_|
-		fb[DISPWIDTH*9*3+pos*3+i*3] 	= type;
-		fb[DISPWIDTH*9*3+pos*3+i*3+1]	= type;
-		fb[DISPWIDTH*9*3+pos*3+i*3+2]	= type;
+		fb[DISPHEIGHT*9*3 + pos*3 + i*3    ] 	= type;
+		fb[DISPHEIGHT*9*3 + pos*3 + i*3 + 1]	= type;
+		fb[DISPHEIGHT*9*3 + pos*3 + i*3 + 2]	= type;
 	}
 	for (i=0; i<10; i++){
-		fb[27+pos*3+DISPWIDTH*i*3] 	= type;
-		fb[27+pos*3+DISPWIDTH*i*3+1]	= type;
-		fb[27+pos*3+DISPWIDTH*i*3+2]	= type;
+		fb[27+pos*3 + DISPHEIGHT*i*3    ] 	= type;
+		fb[27+pos*3 + DISPHEIGHT*i*3 + 1]	= type;
+		fb[27+pos*3 + DISPHEIGHT*i*3 + 2]	= type;
 	}	
 }
 
