@@ -66,17 +66,47 @@ int turnSprite[10][10] = {
 };
 
 int appleSprite[10][10] = {
-	{ 0 ,0, 4, 4, 0, 3, 3, 0, 0, 0},
-	{ 0, 0, 0, 0, 4, 3, 0, 0, 0, 0},
-	{ 0, 1, 1, 1, 3, 0, 1, 1, 1, 0},
-	{ 0, 1, 1, 1, 3, 1, 1, 1, 1, 1},
-	{ 1, 1, 1, 1, 1, 1, 2, 2, 1, 1},
-	{ 1, 1, 1, 1, 1, 1, 2, 2, 1, 1},
-	{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-	{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-	{ 0, 0, 1, 1, 0, 0, 1, 1, 0, 0},
+	{ 0 ,0, 2, 2, 0, 7, 7, 0, 0, 0},
+	{ 0, 0, 0, 0, 2, 7, 0, 0, 0, 0},
+	{ 0, 5, 5, 5, 7, 0, 5, 5, 5, 0},
+	{ 0, 5, 5, 5, 7, 5, 5, 5, 5, 5},
+	{ 5, 5, 5, 5, 5, 5, 6, 6, 5, 5},
+	{ 5, 5, 5, 5, 5, 5, 6, 6, 5, 5},
+	{ 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
+	{ 5, 5, 5, 5, 5, 5, 5, 5, 5, 0},
+	{ 0, 5, 5, 5, 5, 5, 5, 5, 5, 0},
+	{ 0, 0, 5, 5, 0, 0, 5, 5, 0, 0},
 };
+
+void drawPixel_int2col(u8* fb, int pos, int posY, int posX,  int col){
+	switch (col)
+	{
+		case 1:
+			drawPixel( fb, pos, posY, posX, white);
+			break;
+		case 2:
+			drawPixel( fb, pos, posY, posX, snakeGreen);
+			break;
+		case 3:
+			drawPixel( fb, pos, posY, posX, snakeStripes);
+			break;
+		case 4:
+			drawPixel( fb, pos, posY, posX, black);
+			break;
+			
+		case 5:
+			drawPixel( fb, pos, posY, posX, appleRed);
+			break;
+		case 6:
+			drawPixel( fb, pos, posY, posX, appleRed2);
+			break;
+		case 7:
+			drawPixel( fb, pos, posY, posX, appleBrown);
+			break;
+		default:
+			break;			
+	}
+}
 
 void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 	int spriteX;
@@ -89,18 +119,7 @@ void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 		case 1:		// Right
 			for (spriteY=0 ; spriteY < 10; spriteY++){
 				for (spriteX=0; spriteX < 10; spriteX++){
-					if (sprite[spriteX][spriteY] == 1){
-						drawPixel( fb, pos, spriteY, spriteX, white);
-					} 
-					if (sprite[spriteX][spriteY] == 2){
-						drawPixel( fb, pos, spriteY, spriteX, snakeGreen);
-					} 
-					if (sprite[spriteX][spriteY] == 3){
-						drawPixel( fb, pos, spriteY, spriteX, snakeStripes);
-					} 
-					if (sprite[spriteX][spriteY] == 4){
-						drawPixel( fb, pos, spriteY, spriteX, black);
-					}				
+					drawPixel_int2col( fb, pos, spriteY, spriteX, sprite[spriteX][spriteY]);				
 				}
 			}
 			break;
@@ -109,18 +128,7 @@ void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 			for (spriteY=0; spriteY < 10; spriteY++){
 				dispWid = 9;
 				for (spriteX=0; spriteX < 10; spriteX++){
-					if (sprite[spriteY][spriteX] == 1){
-						drawPixel( fb, pos, spriteY, dispWid, white);
-					} 
-					if (sprite[spriteY][spriteX] == 2){
-						drawPixel( fb, pos, spriteY, dispWid, snakeGreen);
-					} 
-					if (sprite[spriteY][spriteX] == 3){
-						drawPixel( fb, pos, spriteY, dispWid, snakeStripes);
-					} 
-					if (sprite[spriteY][spriteX] == 4){
-						drawPixel( fb, pos, spriteY, dispWid, black);
-					}
+					drawPixel_int2col( fb, pos, spriteY, dispWid, sprite[spriteY][spriteX]);
 					dispWid--;				
 				}
 			}
@@ -132,18 +140,7 @@ void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 				dispWid = 10;
 				dispHei--;
 				for (spriteX=0; spriteX < 10; spriteX++){
-					if (sprite[spriteX][spriteY] == 1){
-						drawPixel( fb, pos, dispHei, dispWid-1, white);
-					} 
-					if (sprite[spriteX][spriteY] == 2){
-						drawPixel( fb, pos, dispHei, dispWid-1, snakeGreen);
-					} 
-					if (sprite[spriteX][spriteY] == 3){
-						drawPixel( fb, pos, dispHei, dispWid-1, snakeStripes);
-					} 
-					if (sprite[spriteX][spriteY] == 4){
-						drawPixel( fb, pos, dispHei, dispWid-1, black);
-					}
+					drawPixel_int2col( fb, pos, dispHei, dispWid-1, sprite[spriteX][spriteY]);
 					dispWid--;
 				}
 			}
@@ -154,18 +151,7 @@ void drawSprite(u8* fb, int pos, int direction, int sprite[10][10]){
 			for (spriteY=0; spriteY < 10; spriteY++){
 				dispWid = 0;
 				for (spriteX=0; spriteX < 10; spriteX++){
-					if (sprite[spriteY][spriteX] == 1){
-						drawPixel( fb, pos, dispHei, dispWid, white);
-					} 
-					if (sprite[spriteY][spriteX] == 2){
-						drawPixel( fb, pos, dispHei, dispWid, snakeGreen);
-					} 
-					if (sprite[spriteY][spriteX] == 3){
-						drawPixel( fb, pos, dispHei, dispWid, snakeStripes);
-					} 
-					if (sprite[spriteY][spriteX] == 4){
-						drawPixel( fb, pos, dispHei, dispWid, black);
-					}
+					drawPixel_int2col( fb, pos, dispHei, dispWid, sprite[spriteY][spriteX]);
 					dispWid++;
 				}
 				dispHei--;
@@ -193,35 +179,13 @@ void drawSpriteC(u8* fb, int pos, int direction, int type){
 		drawSprite(fb, pos, direction, turnSprite);
 	} 
 	if (type == 5){
-		int spriteY;
-		int spriteX;
-		int dispWid;
-		int dispHei;
-		dispHei = 9;
-		for (spriteY=0; spriteY < 10; spriteY++){
-			dispWid = 0;
-			for (spriteX=0; spriteX < 10; spriteX++){
-				if (appleSprite[spriteY][spriteX] == 1){
-					drawPixel( fb, pos, dispHei, dispWid, appleRed);
-				} 
-				if (appleSprite[spriteY][spriteX] == 2){
-					drawPixel( fb, pos, dispHei, dispWid, appleRed2);
-				} 
-				if (appleSprite[spriteY][spriteX] == 3){
-					drawPixel( fb, pos, dispHei, dispWid, appleBrown);
-				} 
-				if (appleSprite[spriteY][spriteX] == 4){
-					drawPixel( fb, pos, dispHei, dispWid, snakeGreen);
-				}
-				dispWid++;
-			}
-			dispHei--;
-		}
+		drawSprite(fb, pos, 1, appleSprite);
+		
 	}
 }
 
 
-void drawPixel( u8* fb, int pos, int heightOffset, int widthOffset, colors color){
+void drawPixel( u8* fb, int pos, int heightOffset, int widthOffset, colors color){	
 	fb[(pos*3+heightOffset*3+widthOffset*DISPHEIGHT*3)+0] = color.blue;
 	fb[(pos*3+heightOffset*3+widthOffset*DISPHEIGHT*3)+1] = color.green;
 	fb[(pos*3+heightOffset*3+widthOffset*DISPHEIGHT*3)+2] = color.red;
@@ -286,19 +250,19 @@ void emtySquare(u8* fb, int pos, int type){
 		fb[pos*3+i*3+2]	= type;
 	}
 	for (i=0; i<10; i++){//		|_
-		fb[pos*3+240*i*3] 	= type;
-		fb[pos*3+240*i*3+1]	= type;
-		fb[pos*3+240*i*3+2]	= type;
+		fb[pos*3+DISPWIDTH*i*3] 	= type;
+		fb[pos*3+DISPWIDTH*i*3+1]	= type;
+		fb[pos*3+DISPWIDTH*i*3+2]	= type;
 	}
 	for (i=0; i<10; i++){//		|_|
-		fb[240*9*3+pos*3+i*3] 	= type;
-		fb[240*9*3+pos*3+i*3+1]	= type;
-		fb[240*9*3+pos*3+i*3+2]	= type;
+		fb[DISPWIDTH*9*3+pos*3+i*3] 	= type;
+		fb[DISPWIDTH*9*3+pos*3+i*3+1]	= type;
+		fb[DISPWIDTH*9*3+pos*3+i*3+2]	= type;
 	}
 	for (i=0; i<10; i++){
-		fb[27+pos*3+240*i*3] 	= type;
-		fb[27+pos*3+240*i*3+1]	= type;
-		fb[27+pos*3+240*i*3+2]	= type;
+		fb[27+pos*3+DISPWIDTH*i*3] 	= type;
+		fb[27+pos*3+DISPWIDTH*i*3+1]	= type;
+		fb[27+pos*3+DISPWIDTH*i*3+2]	= type;
 	}	
 }
 
